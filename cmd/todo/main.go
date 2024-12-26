@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	todoFile = ".todo.json"
+	todoFile = "todo.json"
 )
 
 func main() {
