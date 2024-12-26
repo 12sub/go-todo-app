@@ -13,22 +13,61 @@ const (
 )
 
 func main() {
+	// adding a command argument flag: just like argparse in python
 	add := flag.Bool("add", false, "add a note in todo")
+	complete := flag.Int("completed", 0, "completed todo list")
+	del := flag.Int("del", 0, "delete a todo")
+	list := flag.Bool("list", false, "showing todo list")
+
+	// Parsing the flags
 	flag.Parse()
+
+	// getting the address / location of the Todos Struct from todo.go
 	todos := &todo.Todos{}
 
+	// Error handling: if the error equals the loaded todo struct &
+	// the error value dosen't return nil, print the standard OS
+	// error with the error value.
+	// FPrintln formats using the default formats for its operands and writes to w
 	if err := todos.Load(todoFile); err != nil {
-		fmt.Println(os.Stderr, err.Error())
+		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
+
+	// include switch statements for the argument flags
 	switch {
+	// argument flag "add": writing / adding a note
+	// to the command line interface
+	// store function stores every changes written to the
+	// "todofile"
 	case *add:
 		todos.Add("Subomi's Todo")
 		err := todos.Store(todoFile)
 		if err != nil {
-			fmt.Println(os.Stderr, err.Error())
+			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
+		// argument flag "complete": mark note status as
+		// completed to the command line interface
+		// store function stores every changes written to the
+		// "todofile"
+	case *complete > 0:
+		todos.Completed(*complete)
+		err := todos.Store(todoFile)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+	case *del > 0:
+		todos.Delete(*del)
+		err := todos.Store(todoFile)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+	case *list:
+		todos.Print()
+		// this is the default statements if every condition is not fufilled
 	default:
 		fmt.Fprintln(os.Stdout, "invalid command")
 		os.Exit(0)
