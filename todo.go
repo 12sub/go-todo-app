@@ -108,13 +108,15 @@ func (t *Todos) Print() {
 	for idx, item := range *t {
 		idx++
 		task := red(item.Task)
+		done := gray("no")
 		if item.Done {
 			task = green(fmt.Sprintf("\u2705 %s", item.Task))
+			done = green("Yes!")
 		}
 		cells = append(cells, *&[]*simpletable.Cell{
 			{Text: fmt.Sprintf("%d", idx)},
 			{Text: task},
-			{Text: fmt.Sprintf("%t", item.Done)},
+			{Text: done},
 			{Text: item.CreatedAt.String()},
 			{Text: item.CompletedAt.Format(time.RFC822Z)},
 		})
@@ -122,10 +124,20 @@ func (t *Todos) Print() {
 
 	table.Body = &simpletable.Body{Cells: cells}
 	table.Footer = &simpletable.Footer{Cells: []*simpletable.Cell{
-		{Align: simpletable.AlignCenter, Span: 5, Text: "Todo Collections"},
+		{Align: simpletable.AlignCenter, Span: 5, Text: blue(fmt.Sprintf("You have %d unfinished todos", t.Pending()))},
 	}}
 
 	table.SetStyle(simpletable.StyleUnicode)
 
 	table.Println()
+}
+
+func (t *Todos) Pending() int {
+	totalFinished := 0
+	for _, item := range *t {
+		if !item.Done {
+			totalFinished++
+		}
+	}
+	return totalFinished
 }
