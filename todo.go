@@ -1,4 +1,4 @@
-package cmd
+package todo
 
 import (
 	"encoding/json"

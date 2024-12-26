@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/12sub/go-todo-app/todo"
+	"github.com/12sub/go-todo-app"
 )
 
 const (
